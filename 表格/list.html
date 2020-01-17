@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="bg">
+    <div class="form">
+        <form class="" action="index.html" method="POST">
+            <h1>维修委托</h1>
+            <ul><p>设备类型</p><input type="text" placeholder="如：手机/笔记本电脑" ></ul>
+            <ul><p>设备型号</p><input type="text" placeholder="您的设备型号，如：iphone11/联想小新pro13"></ul>
+            <ul><p>故障问题</p><input type="text" placeholder="简要描述设备出现的问题，如：无法开机/c4d疯狂闪退"></ul>
+            <ul>
+                <p>预约时间</p>
+                <select>
+                    <option value="time">周一</option>
+                    <option value="time">周二</option>
+                    <option value="time">周三</option>
+                    <option value="time">周四</option>
+                    <option value="time">周五</option>
+                    <option value="time">周六</option>
+                    <option value="time">周日</option>
+                </select>
+                <input type="time" placeholder="具体时间，如18：00后"id="timebar" style="width: 20%;text-align: center;">
+            </ul>
+            <ul>
+                <p>预约地点</p>
+                <select>
+                    <option value="place">大活204（先锋本部）</option>
+                    <option value="place">任意地点</option>
+                    <option value="place">奇怪的地点</option>
+                    <option value="place">宿舍上门（滑稽）</option>
+                </select>
+            </ul>
+            <input type="submit" value="提交维修委托" id="btn">
+        </form>
+    </div>
+    </div>
+</body>
