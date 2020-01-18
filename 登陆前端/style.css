@@ -1,0 +1,69 @@
+
+    body{
+        margin:0;
+        padding: 0;
+        height: 100%;
+        background: url(bkg.jpg);
+        }
+    .sign-up{
+        margin: 0;
+        padding: 2% 2% 4% 2%;
+        width: 26%;
+        text-align: center;
+        border-radius:25px;
+        box-shadow: 0 0 120px 1px rgba(255,255,255,0.2);
+        background:linear-gradient( rgba(255,255,255,0.4),rgba(255,255,255,0.3));
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+    .sign-up h1{color: #fff;
+                padding-bottom: 40px;}
+
+    input{
+        width: 70%;
+        height: 50px;
+        padding-bottom: 0px ;
+        text-align:center;
+        background: none;
+        border: none;
+        border-bottom: 1px solid #fff;
+        color: #fff;
+        margin-bottom: 20px;
+    }
+
+    input::placeholder{
+        color: rgba(255,255,255,0.8);
+        font-size: 18px;
+        font-family: "neo";
+    }
+
+    #btn{
+        width:70%;
+        height: 50px;
+        border: 1px solid #fff;
+        background: none;
+        font-size:16px;
+        color: #fff;
+        cursor: pointer;
+        margin-top: 25px;
+        font-family: "neo";
+        transition: .25s;
+        margin-top: 20px;
+        position: relative;
+    }
+    #btn:hover{
+        background: rgba(255,255,255,.25);}
+
+    #sign-in{
+        top: 20px;
+        text-align: center;
+        position: relative;
+    }
+
+    #sign-in a{color: #fff;}
+
+    #sign-in a:hover{
+        color: rgb(214, 232, 255);
+    }

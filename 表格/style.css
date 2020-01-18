@@ -1,0 +1,89 @@
+
+    body{
+        margin:0;
+        padding: 0;
+        height: 100%;
+        }
+    .form{
+        margin: 0;
+        padding: 2% 2% 4% 2%;
+        width: 60%;
+        border-radius:25px;
+        box-shadow: 0 0 120px 1px rgba(255,255,255,0.2);
+        border:;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        text-align:center;
+        transform: translate(-50%,-50%);
+    }
+    h1{color: #092044;
+                bottom: 1000px;
+                padding-bottom: 7%;
+                padding-top: 7%;
+                text-align:center;}
+
+    ul{
+        text-align: center;
+    }
+
+    input {
+        width: 60%;
+        height: 50px;
+        padding-left: 10px ;
+        background: none;
+        border: none;
+        border-bottom: 1px solid #092044;
+        color: #092044;
+        margin-bottom: 20px;
+    }
+
+    input::placeholder{
+        color: rgba(77, 74, 90, 0.8);
+        font-size: 15px;
+        font-family: "neo";
+    }
+    p{
+        font-size: 20px;
+        text-align: left;
+    }
+
+    #btn{
+        width:70%;
+        height: 50px;
+        border: 1px solid #092044;
+        background: none;
+        font-size:16px;
+        color: #092044;
+        cursor: pointer;
+        margin-top: 25px;
+        font-family: "neo";
+        transition: .25s;
+        margin-top: 80px;
+        position: relative;
+    }
+    #btn:hover{
+        background: rgba(172, 194, 255, 0.25);}
+
+    #sign-in{
+        top: 20px;
+        text-align: center;
+        position: relative;
+    }
+
+    #sign-in a{color: #092044;}
+
+    #sign-in a:hover{
+        color: rgb(214, 232, 255);
+    }
+
+    select{
+        width: 20%;
+        height: 30px;
+        top: 30px;
+        font-size: 14px;
+    }
+
+    #timebar{
+        width: 30%;
+    }
