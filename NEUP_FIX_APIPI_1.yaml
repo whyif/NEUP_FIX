@@ -1,0 +1,635 @@
+---
+swagger: "2.0"
+info:
+  description: 这是先锋网络维修系统的API规范初稿
+  version: 1.0.0
+  title: 先锋维修API规范
+host: virtserver.swaggerhub.com
+basePath: /Tank1e/NEUP_FIX/1.0.0
+tags:
+- name: 主页
+  description: 登录前的基本主页
+- name: 管理员
+  description: 包含作为管理员登录后的所有页面
+- name: 普通用户
+  description: 包含作为普通用户登录后的所有页面
+schemes:
+- https
+paths:
+  /home:
+    get:
+      tags:
+      - 主页
+      summary: 初始主界面
+      description: 直接访问进入 返回所有公告内容
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/announcement'
+        "404":
+          description: 404 not found but love you
+  /signin:
+    get:
+      tags:
+      - 主页
+      summary: 登录界面
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: OK
+        "405":
+          description: error
+    post:
+      tags:
+      - 主页
+      summary: 用于登录的页面
+      description: ""
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: 一个单独的页面用于提交现有的用户账号信息
+        required: false
+        schema:
+          $ref: '#/definitions/signin'
+      responses:
+        "200":
+          description: login successfully
+        "400":
+          description: wrong password
+        "405":
+          description: cant found this user
+  /signup:
+    get:
+      tags:
+      - 主页
+      summary: 注册界面
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: OK
+        "405":
+          description: error
+    post:
+      tags:
+      - 主页
+      summary: 用于注册新用户的界面
+      description: ""
+      operationId: ""
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: 需要注册的新用户信息
+        required: true
+        schema:
+          $ref: '#/definitions/signup'
+      responses:
+        "200":
+          description: register successfully
+        "400":
+          description: wrong form
+        "405":
+          description: existence user
+  /home/{userid}/info:
+    get:
+      tags:
+      - 普通用户
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: userid
+        in: path
+        description: 显示用户信息的界面
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userinfo'
+    put:
+      tags:
+      - 普通用户
+      description: 修改用户信息
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: userid
+        in: path
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/userinfo'
+      responses:
+        "200":
+          description: done
+        "400":
+          description: cant find this user
+        "405":
+          description: no power
+  /home/accept:
+    post:
+      tags:
+      - 管理员
+      summary: 接受维修请求，提交接受信息
+      description: 修改用户已有的提交的维修请求
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/body'
+      responses:
+        "200":
+          description: done
+        "405":
+          description: no power
+  /home/{applyid}/accept:
+    get:
+      tags:
+      - 管理员
+      summary: 获得某个维修的全部信息
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: applyid
+        in: path
+        description: 显示用户信息的界面 包括请求信息和接受信息
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              apply:
+                $ref: '#/definitions/apply'
+              accpet:
+                $ref: '#/definitions/accept'
+              applyid:
+                type: string
+                example: xxxxsasdsd系统分配
+        "400":
+          description: no available info
+    put:
+      tags:
+      - 管理员
+      summary: 修改某个维修的接受信息
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: applyid
+        in: path
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/accept'
+      responses:
+        "200":
+          description: done
+        "405":
+          description: no power
+  /home/apply:
+    post:
+      tags:
+      - 普通用户
+      summary: 提交维修请求
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: 需要注册的新用户信息
+        required: true
+        schema:
+          $ref: '#/definitions/apply'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: failed
+  /home/{applyid}/apply:
+    get:
+      tags:
+      - 普通用户
+      summary: 查询某个维修请求
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: applyid
+        in: path
+        description: 显示用户信息的界面
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              apply:
+                $ref: '#/definitions/apply'
+              accpet:
+                $ref: '#/definitions/accept'
+              applyid:
+                type: string
+                example: xxxxsasdsd系统分配
+        "400":
+          description: no available info
+    put:
+      tags:
+      - 普通用户
+      description: 修改用户已有的提交的维修请求
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: applyid
+        in: path
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/apply'
+      responses:
+        "200":
+          description: done
+        "405":
+          description: no power
+  /home/{applyid}/mesg:
+    get:
+      tags:
+      - 普通用户
+      - 管理员
+      summary: 通过维修请求id来获取维修留言
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: applyid
+        in: path
+        description: 获取applyid维修的留言
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/mesg_board'
+        "400":
+          description: no available info
+    post:
+      tags:
+      - 普通用户
+      summary: 通过维修请求id来发布维修留言
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: applyid
+        in: path
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/body_1'
+      responses:
+        "200":
+          description: done
+        "405":
+          description: no power
+    put:
+      tags:
+      - 普通用户
+      - 管理员
+      summary: 通过维修请求id来修改维修留言
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: applyid
+        in: path
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/mesg'
+      responses:
+        "200":
+          description: done
+        "405":
+          description: no power
+    delete:
+      tags:
+      - 普通用户
+      - 管理员
+      parameters:
+      - name: applyid
+        in: path
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 删除成功
+        "405":
+          description: no power
+  /home/announcement:
+    get:
+      tags:
+      - 管理员
+      summary: 返回所有公告内容，供管理员使用
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/announcement'
+        "400":
+          description: no available info
+    post:
+      tags:
+      - 管理员
+      description: 发布一个公告
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/body_2'
+      responses:
+        "200":
+          description: done
+        "405":
+          description: no power
+  /home/announcement/{anid}:
+    put:
+      tags:
+      - 管理员
+      description: 修改一个已经发布的公告
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: anid
+        in: path
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/announcement'
+      responses:
+        "200":
+          description: done
+        "405":
+          description: no power
+    delete:
+      tags:
+      - 管理员
+      parameters:
+      - name: anid
+        in: path
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 删除成功
+        "405":
+          description: no power
+definitions:
+  mesg:
+    type: object
+    properties:
+      content:
+        type: string
+        example: 蟹蟹你们
+  mesg_board:
+    type: object
+    properties:
+      content:
+        type: string
+        example: 留言信息
+      userid:
+        type: string
+        example: 用户的Id
+      mesgid:
+        type: string
+        example: 独立的留言id编号
+      applyid:
+        type: string
+        example: 887898usxa
+    description: 返回留言信息
+  signin:
+    type: object
+    required:
+    - password
+    - username
+    properties:
+      username:
+        type: string
+        example: aUserName1
+      password:
+        type: string
+        example: "123456"
+  signup:
+    type: object
+    required:
+    - password
+    - passwordAgain
+    - qqnumber
+    - telephone
+    - truename
+    - username
+    - verfication
+    properties:
+      username:
+        type: string
+        example: aUserName1
+      password:
+        type: string
+        example: "123456"
+      passwordAgain:
+        type: string
+        example: "123456"
+      truename:
+        type: string
+        example: 小明
+      telephone:
+        type: string
+        example: 151888四个6
+      qqnumber:
+        type: string
+        example: "289123632"
+      invitecode:
+        type: string
+        example: a code from NEUP
+      verfication:
+        type: string
+        example: 验证码
+  userinfo:
+    type: object
+    properties:
+      userid:
+        type: string
+        example: 系统分配数字作为绝对辨识
+      username:
+        type: string
+        example: 由用户自己取
+      password:
+        type: string
+        example: 123abc!
+      signup_time:
+        type: string
+        example: 格式为YYYY-MM-DD
+      truename:
+        type: string
+        example: 小明
+      telephone:
+        type: string
+        example: 151888四个6
+      qqnumber:
+        type: string
+        example: "289123632"
+      invitecode:
+        type: string
+        example: a code from NEUP
+  announcement:
+    type: object
+    properties:
+      publicid:
+        type: string
+        example: 发布人
+      content:
+        type: string
+        example: 公告的内容
+      time:
+        type: string
+        example: 公告的时间格式为YYYY-MM-DD
+  apply:
+    type: object
+    properties:
+      device_type:
+        type: string
+        example: 笔记本、台式机
+      device_model:
+        type: string
+        example: DELL
+      time:
+        type: string
+        example: 格式为yyyy-mm-dd
+      description:
+        type: string
+        example: 我电脑开不开了
+      contact:
+        type: string
+        example: QQ:XXXX
+      connecttime:
+        type: string
+        example: 周六周日下午
+      site:
+        type: string
+        example: 大活204
+  accept:
+    type: object
+    properties:
+      applyid:
+        type: string
+        example: 字符串编号，后端分配
+      status:
+        type: string
+        enum:
+        - accept
+        - faild
+        - successed
+        - canceled
+      description:
+        type: string
+        example: 维修条件不足故取消/维修成功，问题在于xxxxx
+      member:
+        type: string
+        example: 你(QQ)、我(tel)和他(wechat)，配上联系方式
+      confire_site:
+        type: string
+        example: 大活204
+      confire_time:
+        type: string
+        example: YYYY-MM-DD，具体时间私下联系
+  body:
+    properties:
+      apply:
+        $ref: '#/definitions/accept'
+      applyid:
+        type: string
+        example: 独立分配的编号
+  body_1:
+    properties:
+      content:
+        type: string
+        example: 这是发布的维修留言
+  body_2:
+    properties:
+      content:
+        type: string
+        example: 公告的内容
