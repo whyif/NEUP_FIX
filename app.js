@@ -15,16 +15,18 @@ client.connect().then(()=>{
     const list=db.collection('list')
     const comment=db.collection('comment')
     const announcement =db.collection('announcement')
-    app.get('/',function(req,res,next){          //主页
+    app.get('/home',function(req,res,next){          //主页
 
     })
     
     app.post('/signin',function(req,res,next){     //登录界面
-            user.findOne({username:req.query.username}).then((result) =>{
-                if(result===null||result.password!=req.query.password){
-                    res.send('错误的用户名或密码')//转到主页
+            user.findOne({username:req.query.username}).then((result) =>{     //暂时没有做get请求
+                if(result===null){
+                    res.sendStatus(405).end()
+                }else if(result.password!=req.query.password){
+                    res.sendStatus(400).end()
                 }else{
-                    res.send('登陆成功')
+                    res.sendStatus(200).end()
                 }
             })
             next();
@@ -33,41 +35,87 @@ client.connect().then(()=>{
     app.post('/signup',function(req,res,next){    //注册界面                  
             user.find({username:req.query.username}).then((result)=>{
                 if(result!=null){
-                    res.send('该用户名已被占用')
+                    res.sendStatus(405).end()
                 } else{
                     user.insertOne({
                         username:req.query.username,
-                        password:req.query.username,
+                        password:req.query.password,
                         tel:req.query.tel,
                         qq:req.query.qq
+                    },function(err,res){
+                        if(err!=null)
+                        res.sendStatus(400).end()
+                        else
+                        res.sendStatus(200).end()
                     })
-                    res.send('注册成功')
                 }
             })
             next();
     })
     
-    app.post('/list',function(req,res,next){     //维修申请表                 
+    app.post('/apply',function(req,res,next){     //维修申请表                 
             list.insertOne({
-                username:"",    //？？？？？？？？？？？？？？从登录信息直接导入？？？？？？？？？？？？
-                name:req.query.name,
-                device:req.query.device,
-                type:req.query.type,
-                problem:req.query.problem,
-                time_fix:req.query.time_fix,
-                time_contact:req.query.time_contact,
-                time:new Date(),
-                place:req.query.place
+                username:"",    //？？？？？？？？？？？？？？从登录信息直接导入？？？？？？？？？？？？,便于查找
+                apply:{
+                    device_type:req.query.device_type,
+                    device_model:req.query.device_model,
+                    description:req.query.description,
+                    contact:req.querycontact,
+                    time:new Date(),
+                    connecttime:req.query.connecttime,
+                    site:req.query.site
+                },
+                accept:{
+                    applyid:"",        //系统自动分配唯一申请id
+                    status:"预约成功",
+                    description:req.query.description,
+                    menber:"",
+                    confire_site:"",
+                    comfire_time:""
+                }
+            },function(err,res){
+                if (err!=null)
+                res.sendStatus(400).end()
+                else
+                res.sendStatus(200).end()
             })
-        res.send('预约成功')
         next();
     })
    
-    app.get('/reservation',function(req,res,next){       //查看个人预约
-            list.find({username:req.query.username})        //！！！！！！！！！！！所有都要修改,不确定是否用return！！！！！！！！！！！！
+    app.get('/apply',function(req,res,next){       //查看个人预约
+            var object=list.find({username:req.query.username}).then(()=>{
+                if(object==null){
+                    res.sendStatus(400).end()
+                }else{
+                    let data ={
+                        apply:{
+                            device_type:object.apply.device_type,
+                            device_model:object.apply.device_model,
+                            time:object.apply.time,
+                            description:object.apply.description,
+                            contact:object.apply.contact,
+                            connecttime:object.apply.connecttime,
+                            site:object.apply.site
+                        },
+                        accept:{
+                            applyid:object.accept.applyid,
+                            status:object.accept.status,
+                            description:object.accept.description,
+                            member:object.accept.member,
+                            confire_site:object.accept.confire_site,
+                            comfire_time:object.accept.confire_time
+                        }
+                    }
+                    res.json(data).sendStatus(200).end()
+                }
+            })        
             next();
     })
     
+    app.put('/apply',function(req,res,next){      //修改维修请求
+
+    })
+
     app.get('/comment',function(req,res,next){      //查看所有评价
             comment.find()
             next();
