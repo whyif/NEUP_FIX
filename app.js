@@ -13,7 +13,7 @@ client.connect().then(()=>{
     const db=client.db(dbname)
     const user =db.collection('user')
     const list=db.collection('list')
-    const comment=db.collection('comment')
+    const mesg=db.collection('mesg')
     const announcement =db.collection('announcement')
     app.get('/home',function(req,res,next){          //主页
 
@@ -116,21 +116,48 @@ client.connect().then(()=>{
 
     })
 
-    app.get('/comment',function(req,res,next){      //查看所有评价
-            comment.find()
-            next();
-    })
-    
-    app.post('/comment_w',function(req,res,next){     //写评价
-        comment.insertOne({
-            time:new Date(),
-            username:"", //！！！！！！！！！！！后端自动记录，需要修改！！！！！！！！！  
-            text:req.query.text  
-        })   
-        res.send('插入成功')    //！！！！！！！！！！返回主页所有res.send()都要修改!!!!!!!!!!!!!!!!!!
+    app.get('/mesg',function(req,res,next){      //查看所有评价      ????????只能查找一个评价，如何查看所有评价??????
+        var object=mesg.find({applyid:req.query.applyid}).then(()=>{
+            if (object==null){
+                res.sendStatus(400).end()
+            }else{
+                let data={
+                    username:object.username,
+                    content:object.username,
+                    applyid:object.applyid,
+                    time:object.time
+                }
+                res.json(data).sendStatus(200).end()
+            }
+        })
         next();
     })
     
+    app.post('/mesg',function(req,res,next){     //写评价
+        mesg.insertOne({
+            time:new Date(),
+            username:"", //！！！！！！！！！！！后端自动记录，需要修改！！！！！！！！！  
+            userid:"",
+            content:req.query.content, 
+            applyid:"",    //后端自动记录
+            mesgid:""   
+        },function(err,res){
+            if(err!=null)
+            res.sendStatus(405).end()
+            else
+            res.sendStatus(200).end()
+        })   
+        next();
+    })
+    
+    app.put('mesg',function(req,res,next){      //修改留言
+        next();
+    })
+
+    app.delete('mesg',function(req,res,next){    //删除留言
+        next();
+    })
+
     app.get('/administer',function(req,res,next){     //管理员主页
         next();
     })
@@ -152,4 +179,7 @@ client.connect().then(()=>{
 })
 
 app.use(express.static('../www'))
-app.listen(8080)
+app.listen(8080)                     
+ //!!!!!!!考虑使用router进行优化!!!!!!!
+ //!!!!!!!!学习数据安全性问题!!!!!!!!!
+ //!!!!!!!搞懂api规范中鬼畜的url!!!!!!!
