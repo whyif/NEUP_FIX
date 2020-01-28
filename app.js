@@ -1,6 +1,5 @@
 const express=require('express')                        //使用前先npm install
 const MongoClient = require('mongodb').MongoClient       //mongoclient用于与MongoDB数据库的客户端进行链接
-const assert = require('assert');
 const app=express();
 
 const mongo_url = 'mongodb://localhost:27017';
@@ -15,11 +14,18 @@ client.connect().then(()=>{
     const list=db.collection('list')
     const mesg=db.collection('mesg')
     const announcement =db.collection('announcement')
-    app.get('/home',function(req,res,next){          //主页
-
+    app.get('/home',function(req,res,next){          //主页,返回所有公告
+        announcement.find({}).toArray().then((result)=>{
+            if(result==null){
+                res.status(404).end()
+            }else{
+                res.status(200).end()
+            }
+        })
+        next();
     })
     
-    app.post('/signin',function(req,res,next){     //登录界面
+    app.post('/home/signin',function(req,res,next){     //登录界面
             user.findOne({username:req.query.username}).then((result) =>{     //暂时没有做get请求
                 if(result===null){
                     res.sendStatus(405).end()
@@ -32,28 +38,31 @@ client.connect().then(()=>{
             next();
     })
     
-    app.post('/signup',function(req,res,next){    //注册界面                  
-            user.find({username:req.query.username}).then((result)=>{
-                if(result!=null){
-                    res.sendStatus(405).end()
-                } else{
-                    user.insertOne({
-                        username:req.query.username,
-                        password:req.query.password,
-                        tel:req.query.tel,
-                        qq:req.query.qq
-                    },function(err,res){
-                        if(err!=null)
-                        res.sendStatus(400).end()
-                        else
-                        res.sendStatus(200).end()
-                    })
-                }
-            })
-            next();
+    app.post('/home/signup',function(req,res,next){    //注册界面                  
+        user.findOne({username:req.query.username}).then((result)=>{
+            if(result==null){
+                user.insertOne({
+                    username:req.query.username,
+                    password:req.query.password,
+                    truename:req.query.truename,
+                    tel:req.query.tel,
+                    qq:req.query.qq,
+                    verfication:req.query.verfication
+                },function(err,res){
+                    if(err!=null){
+                        res.status(400).end()
+                    }else{
+                        res.status(200).end()
+                    }
+                })
+            }else{
+                res.status(405).end()
+            }
+        })
+        next();
     })
     
-    app.post('/apply',function(req,res,next){     //维修申请表                 
+    app.post('/home/apply',function(req,res,next){     //维修申请表                 
             list.insertOne({
                 username:"",    //？？？？？？？？？？？？？？从登录信息直接导入？？？？？？？？？？？？,便于查找
                 apply:{
@@ -73,67 +82,69 @@ client.connect().then(()=>{
                     confire_site:"",
                     comfire_time:""
                 }
-            },function(err,res){
-                if (err!=null)
-                res.sendStatus(400).end()
-                else
-                res.sendStatus(200).end()
+            },function(err){
+                if (err!=null){res.sendStatus(400).end()}
+                else{res.sendStatus(200).end()}
             })
         next();
     })
    
-    app.get('/apply',function(req,res,next){       //查看个人预约
-            var object=list.find({username:req.query.username}).then(()=>{
-                if(object==null){
-                    res.sendStatus(400).end()
+    app.get('/home/:applyid/apply',function(req,res,next){       //查看个人预约
+            list.find({username:req.query.username}).toArray().then((result)=>{
+                if(result==null){
+                    res.status(400).end()
                 }else{
                     let data ={
                         apply:{
-                            device_type:object.apply.device_type,
-                            device_model:object.apply.device_model,
-                            time:object.apply.time,
-                            description:object.apply.description,
-                            contact:object.apply.contact,
-                            connecttime:object.apply.connecttime,
-                            site:object.apply.site
+                            device_type:result.apply.device_type,
+                            device_model:result.apply.device_model,
+                            time:result.apply.time,
+                            description:result.apply.description,
+                            contact:result.apply.contact,
+                            connecttime:result.apply.connecttime,
+                            site:result.apply.site
                         },
                         accept:{
-                            applyid:object.accept.applyid,
-                            status:object.accept.status,
-                            description:object.accept.description,
-                            member:object.accept.member,
-                            confire_site:object.accept.confire_site,
-                            comfire_time:object.accept.confire_time
+                            applyid:result.accept.applyid,
+                            status:result.accept.status,
+                            description:result.accept.description,
+                            member:result.accept.member,
+                            confire_site:result.accept.confire_site,
+                            comfire_time:result.accept.confire_time
                         }
                     }
-                    res.json(data).sendStatus(200).end()
+                    res.json(data).status(200).end()
                 }
             })        
             next();
     })
     
-    app.put('/apply',function(req,res,next){      //修改维修请求
-
+    app.put('/home/:applyid/apply',function(req,res,next){      //修改维修请求
+        list.updateOne({applyid:req.params.accept.applyid},{$set:req.body},function(err,result){
+            if(err==null){res.sendStatus(200).end()}
+            else{res.sendStatus(405).end()}
+        })
+        next();
     })
 
-    app.get('/mesg',function(req,res,next){      //查看所有评价      ????????只能查找一个评价，如何查看所有评价??????
-        var object=mesg.find({applyid:req.query.applyid}).then(()=>{
-            if (object==null){
-                res.sendStatus(400).end()
+    app.get('/home/:applyid/mesg',function(req,res,next){      //查看所有评价      ????????只能查找一个评价，如何查看所有评价??????
+        mesg.find({applyid:req.query.applyid}).toArray().then((result)=>{
+            if (result==null){
+                res.status(400).end()
             }else{
                 let data={
-                    username:object.username,
-                    content:object.username,
-                    applyid:object.applyid,
-                    time:object.time
+                    username:result.username,
+                    content:result.username,
+                    applyid:result.applyid,
+                    time:result.time
                 }
-                res.json(data).sendStatus(200).end()
+                res.json(data).status(200).end()
             }
         })
         next();
     })
     
-    app.post('/mesg',function(req,res,next){     //写评价
+    app.post('/home/:applyid/mesg',function(req,res,next){     //写评价
         mesg.insertOne({
             time:new Date(),
             username:"", //！！！！！！！！！！！后端自动记录，需要修改！！！！！！！！！  
@@ -141,20 +152,26 @@ client.connect().then(()=>{
             content:req.query.content, 
             applyid:"",    //后端自动记录
             mesgid:""   
-        },function(err,res){
-            if(err!=null)
-            res.sendStatus(405).end()
-            else
-            res.sendStatus(200).end()
+        },function(err){
+            if(err!=null){res.status(405).end()}
+            else{res.status(200).end()}
         })   
         next();
     })
     
-    app.put('mesg',function(req,res,next){      //修改留言
+    app.put('/home/:applyid/mesg',function(req,res,next){      //修改留言
+        mesg.updateOne({mesgid:req.params.mesgid},{$set:req.body},function(err){
+            if(err==null){res.sendStatus(200).end()}
+            else{res.sendStatus(405).end()}
+        })
         next();
     })
 
-    app.delete('mesg',function(req,res,next){    //删除留言
+    app.delete('/home/:applyid/mesg',function(req,res,next){    //删除留言
+        mesg.deleteOne({mesgid:req.params.mesgid},function(err){
+            if(err==null){res.sendStatus(200).end()}
+            else{res.sendStatus(405).end()}
+        })
         next();
     })
 
@@ -162,17 +179,37 @@ client.connect().then(()=>{
         next();
     })
     
-    app.post('/administer',function(req,res,next){     //发布公告
+    app.put('/administer/accept',function(req,res,next){    //接受请求，！！！！！建议将管理员主页换成/administer,考虑与前端商量！！！！！
+        list.updateOne({applyid:req.params.accept.applyid},{status:"预约成功"},function(err){
+            if (err==null){res.sendStatus(200).end()}
+            else{res.sendStatus(405).end()}
+        })             //!!!!!!!!!!!!可能存在隐形的问题，学习更新数据!!!!!!!!!!!!!!!!!!!!!!!
+        next();
+    })
+
+    app.post('/home/announcement',function(req,res,next){     //发布公告
         announcement.insertOne({
             time:new Date(),
-            text:req.query.text
+            text:req.query.text,
+            publicid:req.query.publicid   //发布人
+        },function(err){
+            if (err!=null){
+                res.sendStatus(405).end()
+            }else{
+                res.sendStatus(200).end()
+            }
         })
-        res.send('发布公告成功')
         next();
     })
     
-    app.get('/announcement',function(req,res,next){    //查看公告
-        announcement.find()
+    app.get('/home/announcement',function(req,res,next){    //查看公告
+        announcement.find({}).toArray().then((result)=>{
+            if(result==null){
+                res.status(404).end()
+            }else{
+                res.status(200).end()
+            }
+        })
         next();
     })
 
