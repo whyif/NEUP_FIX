@@ -5,29 +5,40 @@ import './index.css';
 import { Menu, Icon } from 'antd';
 import { Avatar } from 'antd';
 import { Layout, Breadcrumb } from 'antd';
+import {AntTreeNodeProps as e} from "antd/lib/tree/Tree";
 
 
 //主页面布局
 const { SubMenu } = Menu;
 const { Header, Content, Footer } = Layout;
 class Mainmenu extends React.Component {
-    state = {
-        current: 'mail',
-    };
+    constructor(props) {
+        super(props);
+        this.state = {current: 'null'};///current暂为NULL
+        this.handleClick = this.handleClick.bind(this);
+    }
 
-    handleClick = e => {
+    handleClick(e) {
         console.log('click ', e);
         this.setState({
-            current: e.key,
+            current: e.key
         });
+        ///current没有用？
+        if (e.key === 'submit'){
+            window.location.replace("https://ant.design/components/menu-cn/");
+        }
+        else if (e.key === 'search'){
+            window.location.href='https://www.baidu.com';
+        }
     };
+
 
     render() {
         return (
             <Layout className="layout">
-                <Header>
+                <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
                     <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} theme="dark" mode="horizontal" style={{ lineHeight: '64px'}}>
-                        <Menu.Item>
+                        <Menu.Item key="submit">
                             <Icon type="desktop" />
                             提交一次维修
                         </Menu.Item>
@@ -68,7 +79,7 @@ class Mainmenu extends React.Component {
                 </Header>
                 <Content style={{ padding: '0 50px' }}>
                     <div id="annoucement"
-                         style={{ background: '#fff', padding: 24, minHeight: 580 }}>公告区域</div>
+                         style={{ background: '#fff', padding: 24, minHeight: 880 }}>公告区域</div>
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>技术支持:先锋网络中心</Footer>
             </Layout>
