@@ -77,10 +77,12 @@ class Mainmenu extends React.Component {
                         </h>
                     </Menu>
                 </Header>
+
                 <Content style={{ padding: '0 50px' }}>
-                    <div id="annoucement"
-                         style={{ background: '#fff', padding: 24, minHeight: 880 }}>公告区域</div>
+                    <div id="announcement"
+                         style={{ background: '#fff', padding: 24, minHeight: 880 ,marginTop: 50}}>公告区域</div>
                 </Content>
+
                 <Footer style={{ textAlign: 'center' }}>技术支持:先锋网络中心</Footer>
             </Layout>
         );
