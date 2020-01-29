@@ -71,18 +71,18 @@ client.connect().then(()=>{
             list.insertOne({
                 username:"",    //？？？？？？？？？？？？？？从登录信息直接导入？？？？？？？？？？？？,便于查找
                 apply:{
-                    device_type:req.query.device_type,
-                    device_model:req.query.device_model,
-                    description:req.query.description,
-                    contact:req.querycontact,
+                    device_type:req.body.device_type,
+                    device_model:req.body.device_model,
+                    description:req.body.description,
+                    contact:req.body.contact,
                     time:new Date(),
-                    connecttime:req.query.connecttime,
-                    site:req.query.site
+                    connecttime:req.body.connecttime,
+                    site:req.body.site
                 },
                 accept:{
                     applyid:"",        //系统自动分配唯一申请id
                     status:"预约成功",
-                    description:req.query.description,
+                    description:req.body.description,
                     menber:"",
                     confire_site:"",
                     comfire_time:""
@@ -150,7 +150,7 @@ client.connect().then(()=>{
             time:new Date(),
             username:"", //！！！！！！！！！！！后端自动记录，需要修改！！！！！！！！！  
             userid:"",
-            content:req.query.content, 
+            content:req.body.content, 
             applyid:"",    //后端自动记录
             mesgid:""   
         },function(err){
@@ -186,8 +186,8 @@ client.connect().then(()=>{
     app.post('/home/announcement',function(req,res){     //发布公告
         announcement.insertOne({
             time:new Date(),
-            text:req.query.text,
-            publicid:req.query.publicid   //发布人
+            text:req.body.text,
+            publicid:req.body.publicid   //发布人
         },function(err){
             if (err!=null){
                 res.sendStatus(405).end()
@@ -202,7 +202,7 @@ client.connect().then(()=>{
             if(result==null){
                 res.status(404).end()
             }else{
-                res.status(200).end()
+                res.status(200).json(result).end()
             }
         })
     })
