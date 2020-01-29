@@ -1,82 +1,55 @@
-
+import { Card } from 'antd';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './index.css';
-import { Menu, Icon } from 'antd';
-import { Avatar } from 'antd';
-import { Layout, Breadcrumb } from 'antd';
+import Mainmenu from './mainform.js';
+import Ancmt from "./announcement";
+//import {AxiosInstance as axios} from "axios";
+import axios from 'axios';
+
+let info = '';
 
 
-//主页面布局
-const { SubMenu } = Menu;
-const { Header, Content, Footer } = Layout;
-class Mainmenu extends React.Component {
-  state = {
-    current: 'mail',
-  };
+axios.get('/home')
+    .then(function(response) {
+        console.log(response.data);
 
-  handleClick = e => {
-    console.log('click ', e);
-    this.setState({
-      current: e.key,
+    if (response.status = '200'){
+        const data = JSON.parse(response.data);
+        info = data.map((part) => <Card title={part.publicid} extra={part.time} style={{ width: 1350 }}>
+            <p>{part.content}</p>
+        </Card>
+        );
+    }
+    else info = <h>No info</h>;
     });
-  };
 
-  render() {
-    return (
-      <Layout className="layout">
-      <Header>
-      <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} theme="dark" mode="horizontal" style={{ lineHeight: '64px' }}>
-        <Menu.Item>
-          <Icon type="desktop" />
-          提交一次维修
-        </Menu.Item>
+/*
+const data = '[{"publicid": "user1","content": "公告的内容1","time": "YYYY-MM-DD"},' +
+    '{"publicid": "发布人2","content": "公告的内容2","time": "2020-MM-DD"},' +
+    '{"publicid": "发布人3","content": "公告的内容3","time": "2020-1-28"}]';
+const Odata = JSON.parse(data);
 
-        <SubMenu
-          title={
-            <span className="submenu-title-wrapper">
-              <Icon type="appstore" />
-              我的
-            </span>
-          }
-        >
-          <Menu.ItemGroup title="维修">
-            <Menu.Item key="setting:1">查询我的维修</Menu.Item>
-          </Menu.ItemGroup>
-          <Menu.ItemGroup title="用户">
-            <Menu.Item key="setting:3">我的用户信息</Menu.Item>
-            <Menu.Item key="setting:4">注销</Menu.Item>
-          </Menu.ItemGroup>
-        </SubMenu>
 
-        <Menu.Item key="infopage">
-        <a href="https://www.baidu.com" target="_blank" rel="noopener noreferrer">
-          关于先锋维修
-        </a>
-      </Menu.Item>
-      
-      <Menu.Item key="app">
-        <Icon type="setting" />
-        作为管理员登录
-      </Menu.Item>
-      <Avatar size="small" icon="user" />
-      <h> 您好，
-        <a href="https://www.baidu.com" target="_blank" rel="noopener noreferrer">
-          请登录</a>
-      </h>
-      </Menu>
-      </Header>
-      <Content style={{ padding: '0 50px' }}>
-        <div id="annoucement"
-        style={{ background: '#fff', padding: 24, minHeight: 280 }}>公告区域</div>
-      </Content>
-      <Footer style={{ textAlign: 'center' }}>技术支持:先锋网络中心</Footer>
-      </Layout>
-    );
-  }
-}
+const Odata = [{"publicid": "user1","content": "公告的内容1","time": "YYYY-MM-DD"},
+    {"publicid": "发布人2","content": "公告的内容2","time": "2020-MM-DD"}];
 
+//测试部分，公告显示正常
+
+const info = Odata.map((part) => {return <Card title={part.publicid} extra={part.time} style={{ width: 1350 }}>
+                        <p>{part.content}</p>
+                        </Card> });
+*/
 
 ReactDOM.render(<Mainmenu />, document.getElementById('mainmenu'));
-          
+ReactDOM.render(
+    <div>
+        {info}
+    </div>
+,document.getElementById('announcement'));
+ReactDOM.render(
+    <div>
+    <Ancmt />
+    </div>
+    , document.getElementById('temp'));

@@ -1,8 +1,9 @@
 {
   "dependencies": {
-    "react-dom": "latest",
+    "antd": "latest",
+    "axios": "^0.19.2",
     "react": "latest",
-    "antd": "latest"
+    "react-dom": "latest"
   },
   "name": "ht7ik",
   "description": null,
